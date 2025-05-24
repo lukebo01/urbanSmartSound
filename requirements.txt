@@ -4,3 +4,10 @@ librosa
 soundfile
 matplotlib
 tqdm
+torch
+torchvision
+torch-audiomentations
+torchmetrics
+scikit-learn
+seaborn
+tensorflow
