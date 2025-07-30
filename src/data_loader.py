@@ -28,19 +28,31 @@ def load_feature(file_path, feature_key):
     return feature, label
 
 def load_vector_features(file_path):
-    """Carica e combina tutte le feature 1D in un unico vettore."""
+    """
+    Carica e combina correttamente tutte le feature (1D e 2D) in un'unica 
+    matrice di feature nel formato (timesteps, features) per un modello 1D.
+    """
     with np.load(file_path, allow_pickle=True) as data:
-        # Carica le feature, assicurandosi che siano 2D (timesteps, features)
-        centroid = data['centroid'].T
-        rolloff = data['rolloff'].T
-        zcr = data['zcr'].T
-        chroma = data['chroma'].T
-        contrast = data['contrast'].T
+        # Carica le feature 1D e aggiungi un nuovo asse per renderle 2D (1, timesteps)
+        centroid = data['centroid'][np.newaxis, :]  # Shape (1, 173)
+        rolloff = data['rolloff'][np.newaxis, :]    # Shape (1, 173)
+        zcr = data['zcr'][np.newaxis, :]            # Shape (1, 173)
         
-        # Concatena lungo l'asse delle feature
-        vector_feature = np.concatenate([centroid, rolloff, zcr, chroma, contrast], axis=1)
+        # Carica le feature che sono già 2D
+        chroma = data['chroma']     # Shape (12, 173)
+        contrast = data['contrast'] # Shape (7, 173)
+        
+        # Concatena tutte le feature lungo l'asse 0 (l'asse delle "feature")
+        # Il risultato avrà shape (22, 173)
+        vector_feature_matrix = np.concatenate([centroid, rolloff, zcr, chroma, contrast], axis=0)
+        
+        # Trasponi la matrice per ottenere il formato desiderato: (timesteps, features)
+        # Da (22, 173) a (173, 22)
+        vector_feature_transposed = vector_feature_matrix.T
+        
         label = data['class_id'].item()
-    return vector_feature, label
+        
+    return vector_feature_transposed, label
 
 def collect_fold_data(fold_dir, feature_loader_fn, **kwargs):
     """Raccoglie tutti i dati da un fold usando una funzione di caricamento specifica."""
