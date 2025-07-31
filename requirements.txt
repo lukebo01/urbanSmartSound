@@ -11,3 +11,4 @@ torchmetrics
 scikit-learn
 seaborn
 tensorflow
+graphviz
