@@ -6,11 +6,23 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-def get_class_map(meta_file_path="../data/raw/UrbanSound8K.csv"):
-    """Carica la mappa delle classi dal file CSV."""
-    df_meta = pd.read_csv(meta_file_path)
-    class_map_df = df_meta[['classID', 'class']].drop_duplicates().sort_values('classID')
-    class_names = dict(zip(class_map_df.classID, class_map_df['class']))
+def get_class_map(csv_path):
+    """
+    Carica la lista dei nomi delle classi, ordinata per classID, dal file CSV.
+
+    Args:
+        csv_path (str): Il percorso completo al file UrbanSound8K.csv.
+
+    Returns:
+        list: Una lista di stringhe con i nomi delle classi, es. ['air_conditioner', ...].
+    """
+    df_meta = pd.read_csv(csv_path)
+    # 1. Prendi le colonne che ci interessano
+    # 2. Rimuovi i duplicati per avere una sola voce per classe
+    # 3. Ordina per classID per assicurare un ordine consistente
+    # 4. Seleziona solo la colonna 'class'
+    # 5. Convertila in una lista
+    class_names = df_meta[['classID', 'class']].drop_duplicates().sort_values('classID')['class'].tolist()
     return class_names
 
 def load_feature(file_path, feature_key):
