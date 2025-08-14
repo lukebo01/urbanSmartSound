@@ -4,3 +4,4 @@ data/
 # Ignore Python virtual environment
 .venv/
 models/
+paper_UrbanSmartSound.pdf
